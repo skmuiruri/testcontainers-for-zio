@@ -56,6 +56,7 @@ object ZKafkaContainerSpec extends ZIOSpecDefault {
 
         val testCase = for {
           _ <- Producer.produce("test-topic", "test-key", "test-value", Serde.string, Serde.string)
+          - <- TestClock.adjust(5.seconds)
           result <- Consumer
                       .subscribeAnd(Subscription.topics("test-topic"))
                       .plainStream(Serde.string, Serde.string)
@@ -76,5 +77,5 @@ object ZKafkaContainerSpec extends ZIOSpecDefault {
         ZKafkaContainer.live,
         ZKafkaContainer.defaultConsumerSettings,
         ZKafkaContainer.defaultProducerSettings
-      ) @@ withLiveClock
+      ) //@@ withLiveClock
 }
